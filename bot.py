@@ -85,7 +85,7 @@ class MyClient(discord.Client):
 
 client = MyClient()
 try:
-    client.run('ODAwMDE4MTUwNTk4MTE1MzI4.YAMA9g.1OlN_gLugzJ24RDDOM2sCuDqytc')
+    client.run('insert_token_here')
 except:
     e = sys.exc_info()[0]
     print(e)
