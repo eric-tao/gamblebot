@@ -6,6 +6,7 @@ import datetime
 import requests
 import re
 import sys
+import dice
 
 class DBHelper:
     def __init__(self,dbname='db.sqlite3'):
@@ -45,6 +46,7 @@ class MyClient(discord.Client):
         self.db.setup()
         self.coindesk_api = "https://api.coindesk.com/v1/bpi/currentprice.json"
         self.time_delay = 5
+        self.commands_msg = "Subcommands supported:\n```btc: display price of BTC in the past 15 min\nroll: with a xdy argument, roll x dice\n```"
         print('Logged on as', self.user)
 
     def get_cached_btc_price(self):
@@ -70,15 +72,27 @@ class MyClient(discord.Client):
             return
         elif re.match(r'^gamble\b', message.content) is not None:
             if len(message.content.split()) == 1:
-                await message.channel.send("Subcommands supported:\n```btc: display price of BTC in the past 15 min\n```")
+                await message.channel.send(self.commands_msg)
             elif message.content.split()[1] == 'btc':
                 time,price =  self.get_cached_btc_price()
                 embed = discord.Embed()
                 embed.description = "Powered by [CoinDesk](https://www.coindesk.com/price/bitcoin)"
                 content = "The price of BTC at %s was %s USD\nThis bot will only query the price if cached data is older than %s minutes to avoid overuse of the API."%(time.ctime(),price,str(self.time_delay))
                 await message.channel.send(content=content,embed=embed)
+            elif message.content.split()[1] == 'roll':
+                if len(message.content.split()) == 2:
+                     await message.channel.send("Roll usage:\n```gamble roll xdy: rolls x dice with a range from 1 to y```")
+                elif re.match(r'^\d+d\d+$',message.content.split()[2]) is not None:
+                    string = message.content.split()[2]
+                    x,y = string.split("d")
+                    if x == 1:
+                        await message.channel.send("Rolling %s die with %s faces each...\n%s!"%(x,y,sum(dice.roll(string))))
+                    else:
+                        await message.channel.send("Rolling %s dice with %s faces each...\n%s!"%(x,y,sum(dice.roll(string))))
+                else:
+                    await message.channel.send("Roll usage:\n```gamble roll xdy: rolls x dice with a range from 1 to y```")
             else:
-                await message.channel.send("Subcommands supported:\nbtc: display price of BTC in the past 15 min\n")
+                await message.channel.send(self.commands_msg)
         elif message.content == "ping":
             await message.channel.send('pong')
 
