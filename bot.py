@@ -33,7 +33,7 @@ class DBHelper:
             print("Refusing to insert due to wrong number of args")
 
     def get_item_by_time(self,table,time):
-        stmt = 'SELECT * FROM %s WHERE date > ? ORDER BY date DESC'%(table)
+        stmt = 'SELECT * FROM %s WHERE date > ? ORDER BY date DESC LIMIT 1'%(table)
         args = (time.isoformat(sep=' '),)
         arr = self.conn.execute(stmt,args).fetchall()
         self.conn.commit()
@@ -75,7 +75,7 @@ class MyClient(discord.Client):
                 time,price =  self.get_cached_btc_price()
                 embed = discord.Embed()
                 embed.description = "Powered by [CoinDesk](https://www.coindesk.com/price/bitcoin)"
-                content = "The price of BTC at %s was %s USD\nThis bot will only query the price if cached data is older than 15 minutes to avoid overuse of the API."%(time.ctime(),price)
+                content = "The price of BTC at %s was %s USD\nThis bot will only query the price if cached data is older than %s minutes to avoid overuse of the API."%(time.ctime(),price,str(self.time_delay))
                 await message.channel.send(content=content,embed=embed)
             else:
                 await message.channel.send("Subcommands supported:\nbtc: display price of BTC in the past 15 min\n")
