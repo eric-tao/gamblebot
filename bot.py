@@ -8,8 +8,8 @@ import re
 import sys
 import dice
 from discord.ext import commands
-
 bot = commands.Bot(command_prefix='gamble')
+import os
 
 class DBHelper:
     def __init__(self,dbname='db.sqlite3'):
@@ -112,7 +112,7 @@ class MyClient(discord.Client):
 
 client = MyClient()
 try:
-    client.run('insert_token_here')
+    client.run(os.environ.get('DISCORD_TOKEN'))
 except:
     e = sys.exc_info()[0]
     print(e)
