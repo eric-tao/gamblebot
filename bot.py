@@ -7,8 +7,6 @@ import requests
 import re
 import sys
 import dice
-from discord.ext import commands
-bot = commands.Bot(command_prefix='gamble')
 import os
 
 class DBHelper:
