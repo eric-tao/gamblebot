@@ -7,6 +7,9 @@ import requests
 import re
 import sys
 import dice
+from discord.ext import commands
+
+bot = commands.Bot(command_prefix='gamble')
 
 class DBHelper:
     def __init__(self,dbname='db.sqlite3'):
